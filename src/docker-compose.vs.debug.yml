@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  linuxdocker:
+    image: linuxdocker:dev
+    build:
+      args:
+        source: obj/Docker/empty/
+# need to find a way to use it like this :
+#        source: ${DOCKER_BUILD_SOURCE}
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+    volumes:
+      - ./LinuxDocker:/app
+      - ~\.nuget\packages\:/root/.nuget/packages:ro
+      - ~\vsdbg:/remote_debugger:ro
+# need to find a way to use it like this :
+#      - ${NUGET_PACKAGES}:/root/.nuget/packages:ro
+#      - ${VSDBG_PATH}:/remote_debugger:ro
+      - ~\.dotnet\NuGetFallbackFolder:/root/.nuget/fallbackpackages:ro
+    entrypoint: tail -f /dev/null
+    labels:
+      - "com.microsoft.visualstudio.targetoperatingsystem=linux"
+
+  windocker:
+    image: windocker:dev
+    build:
+      args:
+        source: obj/Docker/empty/
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+    volumes:
+      - ./WinDocker:/app
+      - ~\vsdbg:/remote_debugger:ro
+      - ~\.nuget\packages\:/root/.nuget/packages:ro
+      - ~\.dotnet\NuGetFallbackFolder:/root/.nuget/fallbackpackages:ro
+    entrypoint: tail -f /dev/null
+    labels:
+      - "com.microsoft.visualstudio.targetoperatingsystem=linux"
